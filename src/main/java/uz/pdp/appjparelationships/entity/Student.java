@@ -22,6 +22,11 @@ public class Student {
     @Column(nullable = false)
     private String lastName;
 
+
+    @Column(nullable = false)
+    private Integer age;
+
+
     @OneToOne//ONE student TO ONE address*** ONE address TO ONE student
     private Address address;
 

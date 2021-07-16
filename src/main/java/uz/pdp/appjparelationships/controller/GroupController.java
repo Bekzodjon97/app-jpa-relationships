@@ -38,6 +38,7 @@ public class GroupController {
         return allByFaculty_universityId;
     }
 
+    //create
     @PostMapping
     public String addGroup(@RequestBody GroupDto groupDto) {
 
@@ -55,5 +56,32 @@ public class GroupController {
         return "Group added";
     }
 
+    //Update
+    @RequestMapping(value = "/group/{id}", method = RequestMethod.PUT)
+    public String editGroup(@PathVariable Integer id, @RequestBody GroupDto groupDto) {
+        Optional<Group> optionalGroup = groupRepository.findById(id);
+        Optional<Faculty> optionalFaculty = facultyRepository.findById(groupDto.getFacultyId());
+        if (optionalGroup.isPresent()) {
+            Group editingGroup = optionalGroup.get();
+            Faculty faculty = editingGroup.getFaculty();
+            optionalFaculty.ifPresent(editingGroup::setFaculty);
+            facultyRepository.save(faculty);
+            editingGroup.setName(groupDto.getName());
+            groupRepository.save(editingGroup);
+            return "Successfully edited";
+        }
+        return "Group not found";
+    }
 
+    // Delete
+    @RequestMapping(value = "/group/{id}", method = RequestMethod.DELETE)
+    public String deleteGroup(@PathVariable Integer id) {
+        groupRepository.deleteById(id);
+        boolean deleted = groupRepository.existsById(id);
+        if (deleted) {
+            return "Successfully deleted";
+        } else {
+            return "Group not found";
+        }
+    }
 }
